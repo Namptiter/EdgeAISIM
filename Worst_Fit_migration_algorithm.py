@@ -98,52 +98,43 @@ df = logs
 edge_server_ids = df['Instance ID'].unique()
 
 # Determine the number of subplots based on the number of EdgeServers
-num_subplots = len(edge_server_ids) + 1  # Add 1 for the rewards subplot
+num_subplots = len(edge_server_ids)  # Add 1 for the rewards subplot
 # Create subplots with the desired layout
-# fig, axes = plt.subplots(num_subplots // 2 + 1, 2, figsize=(
-#     12, 4*num_subplots), sharex=True)
-# axes = axes.flatten()
+fig, axes = plt.subplots(num_subplots // 2, 2, figsize=(
+    20, 4*num_subplots), sharex=True)
+axes = axes.flatten()
 # Iterate over each EdgeServer and plot the data in the corresponding subplot
 for i, edge_server_id in enumerate(edge_server_ids):
     # Filter the data for the current EdgeServer
     edge_server_data = df[df['Instance ID'] == edge_server_id]
-    plt.figure(figsize=(6, 4))
+
     # Extract the timestep and power consumption values
     timesteps = edge_server_data['Time Step']
     power_consumption = edge_server_data['Power Consumption']
 
     # Plot the power consumption data for the current EdgeServer in the corresponding subplot
-    # axes[i].plot(timesteps, power_consumption,
-    #              label=f"EdgeServer {edge_server_id}")
+    axes[i].plot(timesteps, power_consumption,
+                 label=f"EdgeServer {edge_server_id}")
 
-    # # Set the subplot title and labels
-    # axes[i].set_title(f"Power Consumption - EdgeServer {edge_server_id}")
-    # axes[i].set_ylabel("Power Consumption")
-    # axes[i].legend()
+    # Set the subplot title and labels
+    axes[i].set_title(f"Power Consumption - EdgeServer {edge_server_id}")
+    axes[i].set_ylabel("Power Consumption")
+    axes[i].legend()
 
-    plt.plot(timesteps, power_consumption,
-             label=f"EdgeServer {edge_server_id}")
-    plt.title(f"Power Consumption - EdgeServer {edge_server_id}")
-    plt.xlabel("Time Step")
-    plt.ylabel("Power Consumption")
-    plt.legend()
+# Adjust the spacing between subplots
+plt.tight_layout()
 
-    # Hiển thị biểu đồ trong cửa sổ riêng
-    plt.show()
+plt.savefig('Worst_fit_migration_power_1_6png')
+for j in range(num_subplots, len(axes)):
+    fig.delaxes(axes[j])
 
-# # Create a separate subplot for total power
-# power_subplot = axes[-1]
-# power_count_list = list(range(1, len(power_list) + 1))
-# power_subplot.plot(power_count_list, power_list)
-# power_subplot.set_title("Total power")
-# power_subplot.set_xlabel("Timestep count")
-# power_subplot.set_ylabel("Power")
-
-# # Adjust the spacing between subplots
-# plt.tight_layout()
-# plt.subplots_adjust(hspace=0.2)
-
-# Save the plot
-# plt.show()
-
-# plt.savefig('Worst_fit_migration_power_consumption_final_uncropped.png')
+# Tạo biểu đồ tổng riêng biệt
+fig_total, ax_total = plt.subplots(
+    figsize=(20, 4))  # Một hàng, toàn chiều rộng
+power_count_list = list(range(1, len(power_list) + 1))
+ax_total.plot(power_count_list, power_list, label="Total Power")
+ax_total.set_title("Total Power")
+ax_total.set_xlabel("Timestep Count")
+ax_total.set_ylabel("Power")
+ax_total.legend()
+plt.savefig('Worst_fit_migration_power_total.png')
